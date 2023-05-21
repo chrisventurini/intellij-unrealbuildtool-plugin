@@ -8,7 +8,6 @@ import com.visionsof.intellijunrealbuildtoolplugin.model.*
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.*
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.internal.*
 import com.visionsof.intellijunrealbuildtoolplugin.ui.textformatting.ExpressionNumberFormatter
-import javax.swing.JLabel
 import javax.swing.JSpinner
 import javax.swing.SpinnerNumberModel
 import javax.swing.text.DefaultFormatterFactory

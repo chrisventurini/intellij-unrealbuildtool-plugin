@@ -53,7 +53,6 @@ fun <T> buildBasicPropUi(parentBuilder: Panel, prop: KMutableProperty0<T?>, enab
                     }
             }
 
-            // TODO: Add regex and that file exists validation
             typeOf<String?>() -> {
                 val fileAnnon = getAnnotation<UbtFileConfigProp>(prop, false)
                 if (fileAnnon == null) {
