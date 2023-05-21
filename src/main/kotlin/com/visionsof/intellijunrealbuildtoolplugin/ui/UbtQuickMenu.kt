@@ -8,6 +8,7 @@ import com.visionsof.intellijunrealbuildtoolplugin.model.BuildConfiguration
 import com.visionsof.intellijunrealbuildtoolplugin.model.ParallelExecutorConfiguration
 import com.visionsof.intellijunrealbuildtoolplugin.model.UbtConfiguration
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.buildProcessCountMultiplierSlider
+import com.visionsof.intellijunrealbuildtoolplugin.ui.tabbuilders.checkConfig
 import javax.swing.JLabel
 import kotlin.reflect.KMutableProperty1
 
@@ -130,7 +131,7 @@ fun buildUbtQuickMenu(config: UbtConfiguration, onApply : () -> Unit, onCancel: 
                 label("Process Count Multiplier")
             }
             row() {
-                buildProcessCountMultiplierSlider(this, config.parallelExecutor!!)
+                buildProcessCountMultiplierSlider(this, checkConfig(config, UbtConfiguration::parallelExecutor, ::ParallelExecutorConfiguration)!!)
             }
         }
         row() {
