@@ -7,6 +7,7 @@ import com.intellij.ui.dsl.builder.*
 import com.visionsof.intellijunrealbuildtoolplugin.model.BuildConfiguration
 import com.visionsof.intellijunrealbuildtoolplugin.model.ParallelExecutorConfiguration
 import com.visionsof.intellijunrealbuildtoolplugin.model.UbtConfiguration
+import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.buildProcessCountMultiplierSlider
 import javax.swing.JLabel
 import kotlin.reflect.KMutableProperty1
 
@@ -18,7 +19,6 @@ fun buildUbtQuickMenu(config: UbtConfiguration, onApply : () -> Unit, onCancel: 
     val maxProcessors = Runtime.getRuntime().availableProcessors()
 
     val buildConfigProp = UbtConfiguration::buildConfiguration
-    val parallelExecutorProp = UbtConfiguration::parallelExecutor
 
     fun <T, U> configNullCheck (parentProp: KMutableProperty1<UbtConfiguration, T?>, prop: KMutableProperty1<T, U?>, defaultValue: U ) : U {
         val parentVal = parentProp.get(config)
@@ -130,16 +130,7 @@ fun buildUbtQuickMenu(config: UbtConfiguration, onApply : () -> Unit, onCancel: 
                 label("Process Count Multiplier")
             }
             row() {
-                // TODO: Make make builder function with the quick action menu
-                slider(0,20, 1, 5)
-                    .labelTable(mapOf(
-                        0 to JLabel("0"),
-                        10 to JLabel("1"),
-                        20 to JLabel("2")
-                    )).bindValue(
-                        { (configNullCheck(parallelExecutorProp, ParallelExecutorConfiguration::processorCountMultiplier, 1.0) * 10.0).toInt() },
-                        { configAssign(UbtConfiguration::parallelExecutor, ::ParallelExecutorConfiguration, ParallelExecutorConfiguration::processorCountMultiplier, (it.toDouble() / 10))
-                    })
+                buildProcessCountMultiplierSlider(this, config.parallelExecutor!!)
             }
         }
         row() {
