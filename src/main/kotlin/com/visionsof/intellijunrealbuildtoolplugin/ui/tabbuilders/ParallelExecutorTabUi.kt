@@ -21,19 +21,7 @@ fun buildParallelConfigurationUi(masterConfig: UbtConfiguration): DialogPanel {
         group ("General"){
             buildBasicPropUi(this, config!!::stopCompilationAfterErrors)
 
-            // TODO: Make make builder function with the quick action menu
-            val processCountMultiProp = config::processorCountMultiplier
-            val processCountMultiAnnon = getAnnotation<UbtDoubleConfigProp>(processCountMultiProp, true)!!
-            buildDefaultLayout(this, processCountMultiAnnon.description) {
-                slider(0,20, 1, 5)
-                    .label(processCountMultiAnnon.prettyTitle)
-                    .labelTable(mapOf(0 to JLabel("0"), 10 to JLabel("1"), 20 to JLabel("2")))
-                    .bindValue({
-                        (processCountMultiProp.get() ?: processCountMultiAnnon.default).toInt() * 10
-                    },{
-                        processCountMultiProp.set(it.toDouble() / 10)
-                    })
-            }
+            buildProcessCountMultiplierSliderWithLayout(this, config)
 
             val memoryPerActionProp = config::memoryPerActionBytes
             val memoryPerActionAnnon = getAnnotation<UbtLongConfigProp>(memoryPerActionProp, true)!!
