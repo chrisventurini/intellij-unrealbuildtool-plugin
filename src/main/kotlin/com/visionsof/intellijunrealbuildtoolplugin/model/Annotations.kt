@@ -29,7 +29,7 @@ annotation class UbtBooleanConfigProp(val prettyTitle: String, val description: 
 annotation class UbtStringConfigProp(val prettyTitle: String, val description: String = "", val default:String = "", val regexValidation:String = "")
 
 @Target(AnnotationTarget.PROPERTY)
-annotation class UbtStringArrayConfigProp(val prettyTitle: String, val description: String = "", val default:String = "", val regexValidation:String="")
+annotation class UbtStringArrayConfigProp(val prettyTitle: String, val description: String = "", val default:String = "", val prototypeFormat:String="", val regexValidation:String="")
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class UbtIntConfigProp(val prettyTitle: String, val description: String = "", val default:Int = 0)

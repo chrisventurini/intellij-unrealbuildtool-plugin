@@ -1,8 +1,6 @@
 package com.visionsof.intellijunrealbuildtoolplugin.ui.tabbuilders
 
 import com.intellij.openapi.ui.DialogPanel
-import com.intellij.ui.dsl.builder.bindValue
-import com.intellij.ui.dsl.builder.labelTable
 import com.intellij.ui.dsl.builder.panel
 import com.visionsof.intellijunrealbuildtoolplugin.model.*
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.*

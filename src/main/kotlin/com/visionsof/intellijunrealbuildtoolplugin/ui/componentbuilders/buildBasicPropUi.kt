@@ -72,23 +72,23 @@ fun <T> buildBasicPropUi(parentBuilder: Panel, prop: KMutableProperty0<T?>, enab
                 returnDefault =
                     buildStandardControl<UbtStringArrayConfigProp, T>(parentBuilder, prop, onChange) { annon, _ ->
                     val values = (prop.get() as Array<String>?) ?: arrayOf()
-                    val ipAddressesModel = DefaultListModel<String>().apply { addAll( values.toList() ) }
+                    val listModel = DefaultListModel<String>().apply { addAll( values.toList() ) }
 
                     parentBuilder.row { label(annon.prettyTitle) }
 
                     parentBuilder.row {
                         val prefSize = Dimension(100, 75)
-                        val ipAddressList = JBList(ipAddressesModel).apply {
+                        val ipAddressList = JBList(listModel).apply {
                             setEmptyText("None")
                             fixedCellWidth = prefSize.width
-                            prototypeCellValue = "XXX.XXX.XXX.XXX"
+                            prototypeCellValue = annon.prototypeFormat
                             selectionMode = ListSelectionModel.SINGLE_SELECTION
                         }
 
                         parentBuilder.onApply {
                             val allValues = mutableListOf<String>()
-                            for(i in 0 until ipAddressesModel.size()) {
-                                allValues.add(ipAddressesModel.getElementAt(i) as String)
+                            for(i in 0 until listModel.size()) {
+                                allValues.add(listModel.getElementAt(i) as String)
                             }
                             prop.set(allValues.toTypedArray() as T)
                         }
@@ -104,28 +104,28 @@ fun <T> buildBasicPropUi(parentBuilder: Panel, prop: KMutableProperty0<T?>, enab
                             val selectedValue = ipAddressList.selectedValue
                             if(selectedValue != null) {
                                 JBPopupFactory.getInstance().createConfirmation("Are you sure?", {
-                                    ipAddressesModel.removeElement(selectedValue)
+                                    listModel.removeElement(selectedValue)
                                 }, 1).showInFocusCenter()
                             }
                         }
                     }
 
                     parentBuilder.row {
-                        val newIpTextField = textField().apply { component.size.width = 100 }
+                        val newValueTextField = textField().apply { component.size.width = 100 }
 
                         button("Add") {
-                            val value = newIpTextField.component.text
+                            val value = newValueTextField.component.text
                             if(annon.regexValidation != "" && Regex(annon.regexValidation).matches(value)) {
-                                ipAddressesModel.addElement(value)
-                                newIpTextField.component.text = ""
-                                newIpTextField.component.border = JBUI.Borders.customLine(JBColor.border())
+                                listModel.addElement(value)
+                                newValueTextField.component.text = ""
+                                newValueTextField.component.border = JBUI.Borders.customLine(JBColor.border())
                             } else {
-                                newIpTextField.component.border = JBUI.Borders.customLine(Color.RED)
+                                newValueTextField.component.border = JBUI.Borders.customLine(Color.RED)
                                 val errBalloon = JBPopupFactory.getInstance().createBalloonBuilder(JBLabel("Not Valid"))
                                     .setFadeoutTime(1000)
 
-                                val location = RelativePoint(newIpTextField.component, Point(20, newIpTextField.component.height))
-                                errBalloon.createBalloon().show(location, Balloon.Position.below)
+                                val location = RelativePoint(newValueTextField.component, Point(30, 0))
+                                errBalloon.createBalloon().show(location, Balloon.Position.above)
                             }
                         }
                     }

@@ -30,7 +30,7 @@ data class IncredibuildExecutorConfiguration(
     var allowOverVpn: Boolean? = null,
 
     @field:XmlElement(name = "VpnSubnets", namespace = NAMESPACE)
-    @property:UbtStringArrayConfigProp("VPN Subnets", "List of subnets containing IP addresses assigned by VPN", "", """^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!${'$'})|${'$'})){4}${'$'}""")
+    @property:UbtStringArrayConfigProp("VPN Subnets", "List of subnets containing IP addresses assigned by VPN", "", "XXX.XXX.XXX.XXX", """^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!${'$'})|${'$'})){4}${'$'}""")
     var vpnSubnets: Array<String>? = null,
 
 ){
