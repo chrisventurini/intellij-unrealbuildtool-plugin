@@ -16,7 +16,6 @@ import kotlin.reflect.KMutableProperty0
 
 
 internal fun <T> buildFilePropUi(parentBuilder: Panel, prop: KMutableProperty0<T?>, fileAnnon: UbtFileConfigProp, enabled: Boolean = true, onChange: (value: T) -> Unit = {}) {
-
     buildDefaultLayout(parentBuilder, fileAnnon.description) {
 
         val observableProp = buildObservableProp(prop, fileAnnon.default as T?, false, onChange)
@@ -39,5 +38,4 @@ internal fun <T> buildFilePropUi(parentBuilder: Panel, prop: KMutableProperty0<T
             .bindText(observableProp as ObservableMutableProperty<String>)
             .enabled(enabled)
     }
-
 }

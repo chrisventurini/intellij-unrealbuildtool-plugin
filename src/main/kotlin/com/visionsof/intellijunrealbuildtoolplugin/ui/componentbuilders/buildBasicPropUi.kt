@@ -11,6 +11,7 @@ import com.intellij.ui.components.*
 import com.intellij.ui.dsl.builder.*
 import com.intellij.util.ui.JBUI
 import com.visionsof.intellijunrealbuildtoolplugin.model.*
+import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.basic.*
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.internal.*
 import java.awt.Color
 import java.awt.Dimension
@@ -35,105 +36,23 @@ fun <T> buildBasicPropUi(parentBuilder: Panel, prop: KMutableProperty0<T?>, enab
     } else {
         when (prop.returnType) {
             typeOf<Boolean?>() -> {
-                returnDefault =
-                    buildStandardControl<UbtBooleanConfigProp, T>(parentBuilder, prop,onChange) { annon, observableProp ->
-                    checkBox(annon.prettyTitle)
-                        .bindSelected(observableProp as ObservableMutableProperty<Boolean>)
-                        .enabled(enabled)
-                }
-
+                returnDefault = buildBooleanBasicComponent(parentBuilder, prop, enabled, onChange)
             }
 
             typeOf<Int?>() -> {
-                returnDefault =
-                    buildStandardControl<UbtIntConfigProp, T>(parentBuilder, prop, onChange) { annon, observableProp ->
-                        intTextField()
-                            .label(annon.prettyTitle)
-                            .bindIntText(observableProp as ObservableMutableProperty<Int>)
-                    }
+                returnDefault = buildIntBasicComponent(parentBuilder, prop, enabled, onChange)
             }
 
             typeOf<String?>() -> {
-                val fileAnnon = getAnnotation<UbtFileConfigProp>(prop, false)
-                if (fileAnnon == null) {
-                    returnDefault =
-                        buildStandardControl<UbtStringConfigProp, T>(parentBuilder, prop, onChange) { annon, observableProp ->
-                        textField()
-                            .label(annon.prettyTitle)
-                            .bindText(observableProp as ObservableMutableProperty<String>)
-                            .enabled(enabled)
-                    }
-                } else {
-                    buildFilePropUi(parentBuilder, prop, fileAnnon)
-                }
+                returnDefault = buildStingBasicComponent(parentBuilder, prop, enabled, onChange)
             }
 
             typeOf<Array<String>?>() -> {
-                returnDefault =
-                    buildStandardControl<UbtStringArrayConfigProp, T>(parentBuilder, prop, onChange) { annon, _ ->
-                    val values = (prop.get() as Array<String>?) ?: arrayOf()
-                    val listModel = DefaultListModel<String>().apply { addAll( values.toList() ) }
-
-                    parentBuilder.row { label(annon.prettyTitle) }
-
-                    parentBuilder.row {
-                        val prefSize = Dimension(100, 75)
-                        val ipAddressList = JBList(listModel).apply {
-                            setEmptyText("None")
-                            fixedCellWidth = prefSize.width
-                            prototypeCellValue = annon.prototypeFormat
-                            selectionMode = ListSelectionModel.SINGLE_SELECTION
-                        }
-
-                        parentBuilder.onApply {
-                            val allValues = mutableListOf<String>()
-                            for(i in 0 until listModel.size()) {
-                                allValues.add(listModel.getElementAt(i) as String)
-                            }
-                            prop.set(allValues.toTypedArray() as T)
-                        }
-
-                        val containerPanel = JBPanel<JBPanel<*>>().apply { preferredSize = prefSize }
-                        containerPanel.layout = BoxLayout(containerPanel, BoxLayout.Y_AXIS)
-                        containerPanel.add(JBScrollPane(ipAddressList).apply {
-                            horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-                        })
-                        cell(containerPanel)
-
-                        button("Remove") {
-                            val selectedValue = ipAddressList.selectedValue
-                            if(selectedValue != null) {
-                                JBPopupFactory.getInstance().createConfirmation("Are you sure?", {
-                                    listModel.removeElement(selectedValue)
-                                }, 1).showInFocusCenter()
-                            }
-                        }
-                    }
-
-                    parentBuilder.row {
-                        val newValueTextField = textField().apply { component.size.width = 100 }
-
-                        button("Add") {
-                            val value = newValueTextField.component.text
-                            if(annon.regexValidation != "" && Regex(annon.regexValidation).matches(value)) {
-                                listModel.addElement(value)
-                                newValueTextField.component.text = ""
-                                newValueTextField.component.border = JBUI.Borders.customLine(JBColor.border())
-                            } else {
-                                newValueTextField.component.border = JBUI.Borders.customLine(Color.RED)
-                                val errBalloon = JBPopupFactory.getInstance().createBalloonBuilder(JBLabel("Not Valid"))
-                                    .setFadeoutTime(1000)
-
-                                val location = RelativePoint(newValueTextField.component, Point(30, 0))
-                                errBalloon.createBalloon().show(location, Balloon.Position.above)
-                            }
-                        }
-                    }
-                }
+                returnDefault = buildStingArrayBasicComponent(parentBuilder, prop, enabled, onChange)
             }
 
             typeOf<Double?>() -> {
-                returnDefault = buildSpinnerPropUi(parentBuilder, prop as KMutableProperty0<Double?>, 0.0..100000000000.0, 0.1) as T
+                returnDefault = buildDoubleBasicComponent(parentBuilder, prop, enabled, onChange)
             }
         }
     }
