@@ -6,8 +6,7 @@ import java.io.File
 import javax.xml.bind.*
 
 internal class UbtConfigService() {
-    companion object
-    {
+    companion object {
         @JvmStatic
         fun getInstance(): UbtConfigService = ApplicationManager.getApplication().getService(UbtConfigService::class.java)
 

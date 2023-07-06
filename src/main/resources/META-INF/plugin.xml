@@ -34,5 +34,6 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.visionsof.intellijunrealbuildtoolplugin.services.UbtConfigService"/>
+        <applicationService serviceImplementation="com.visionsof.intellijunrealbuildtoolplugin.services.BasicPropUiFactoryService"/>
     </extensions>
 </idea-plugin>

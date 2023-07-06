@@ -3,23 +3,25 @@ package com.visionsof.intellijunrealbuildtoolplugin.ui.tabbuilders
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.dsl.builder.panel
 import com.visionsof.intellijunrealbuildtoolplugin.model.*
+import com.visionsof.intellijunrealbuildtoolplugin.services.BasicPropUiFactoryService
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.*
-import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.internal.*
 
 @UbtConfigTabUi("Incredibuild Executor" )
 fun buildIncredibuildConfigurationUi(masterConfig: UbtConfiguration): DialogPanel {
     val config = checkConfig(masterConfig, UbtConfiguration::incredibuildExecutorConfiguration, ::IncredibuildExecutorConfiguration)
 
+    val propService = BasicPropUiFactoryService.getInstance()
+
     return panel() {
         group ("General"){
-            buildBasicPropUi(this, config!!::unavailableIfInUse)
-            buildBasicPropUi(this, config::useVCCompilerMode)
-            buildBasicPropUi(this, config::minActions)
+            propService.build(this, config!!::unavailableIfInUse)
+            propService.build(this, config::useVCCompilerMode)
+            propService.build(this, config::minActions)
         }
         group ("Network"){
-            buildBasicPropUi(this, config!!::allowRemoteLinking)
+            propService.build(this, config!!::allowRemoteLinking)
             buildEnablementSection(this, config::allowOverVpn) {
-                buildBasicPropUi(this, config::vpnSubnets)
+                propService.build(this, config::vpnSubnets)
             }
         }
     }

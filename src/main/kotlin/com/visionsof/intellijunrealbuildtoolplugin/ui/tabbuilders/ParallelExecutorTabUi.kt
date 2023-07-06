@@ -3,6 +3,7 @@ package com.visionsof.intellijunrealbuildtoolplugin.ui.tabbuilders
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.dsl.builder.panel
 import com.visionsof.intellijunrealbuildtoolplugin.model.*
+import com.visionsof.intellijunrealbuildtoolplugin.services.BasicPropUiFactoryService
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.*
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.internal.*
 import com.visionsof.intellijunrealbuildtoolplugin.ui.textformatting.ExpressionNumberFormatter
@@ -14,9 +15,11 @@ import javax.swing.text.DefaultFormatterFactory
 fun buildParallelConfigurationUi(masterConfig: UbtConfiguration): DialogPanel {
     val config = checkConfig(masterConfig, UbtConfiguration::parallelExecutor, ::ParallelExecutorConfiguration)
 
+    val propService = BasicPropUiFactoryService.getInstance()
+
     return panel() {
         group ("General"){
-            buildBasicPropUi(this, config!!::stopCompilationAfterErrors)
+            propService.build(this, config!!::stopCompilationAfterErrors)
 
             buildProcessCountMultiplierSliderWithLayout(this, config)
 
@@ -44,12 +47,12 @@ fun buildParallelConfigurationUi(masterConfig: UbtConfiguration): DialogPanel {
                 comment("bytes (scientific notation)")
             }
 
-            buildBasicPropUi(this, config::processPriority)
+            propService.build(this, config::processPriority)
         }
         group ("Logging"){
-            buildBasicPropUi(this, config!!::showCompilationTimes)
-            buildBasicPropUi(this, config::showPerActionCompilationTimes)
-            buildBasicPropUi(this, config::logActionCommandLines)
+            propService.build(this, config!!::showCompilationTimes)
+            propService.build(this, config::showPerActionCompilationTimes)
+            propService.build(this, config::logActionCommandLines)
         }
     }
 }

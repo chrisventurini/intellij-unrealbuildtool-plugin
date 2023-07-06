@@ -1,9 +1,6 @@
 package com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders
 
-import com.intellij.ui.dsl.builder.Panel
-import com.intellij.ui.dsl.builder.Row
-import com.intellij.ui.dsl.builder.bindValue
-import com.intellij.ui.dsl.builder.labelTable
+import com.intellij.ui.dsl.builder.*
 import com.visionsof.intellijunrealbuildtoolplugin.model.ParallelExecutorConfiguration
 import com.visionsof.intellijunrealbuildtoolplugin.model.UbtDoubleConfigProp
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.internal.getAnnotation

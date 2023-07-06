@@ -3,23 +3,25 @@ package com.visionsof.intellijunrealbuildtoolplugin.ui.tabbuilders
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.dsl.builder.panel
 import com.visionsof.intellijunrealbuildtoolplugin.model.*
-import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.*
+import com.visionsof.intellijunrealbuildtoolplugin.services.BasicPropUiFactoryService
 
 @UbtConfigTabUi("Windows Platform" )
 fun buildWindowsPlatformConfigurationUi(masterConfig: UbtConfiguration): DialogPanel {
     val config = checkConfig(masterConfig, UbtConfiguration::windowsPlatform, ::WindowsPlatformConfiguration)
 
+    val propService = BasicPropUiFactoryService.getInstance()
+
     return panel() {
         group ("Compilation"){
-            buildBasicPropUi(this, config!!::compiler)
-            buildBasicPropUi(this, config::compilerVersion)
-            buildBasicPropUi(this, config::windowsSdkVersion)
-            buildBasicPropUi(this, config::compilerTrace)
-            buildBasicPropUi(this, config::pchMemoryAllocationFactor)
+            propService.build(this, config!!::compiler)
+            propService.build(this, config::compilerVersion)
+            propService.build(this, config::windowsSdkVersion)
+            propService.build(this, config::compilerTrace)
+            propService.build(this, config::pchMemoryAllocationFactor)
         }
         group ("Pathing"){
-            buildBasicPropUi(this, config!!::maxNestedPathLength)
-            buildBasicPropUi(this, config::maxNestedPathLength)
+            propService.build(this, config!!::maxNestedPathLength)
+            propService.build(this, config::maxNestedPathLength)
         }
     }
 }

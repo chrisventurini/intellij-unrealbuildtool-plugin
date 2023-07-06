@@ -32,7 +32,7 @@ import kotlin.reflect.KMutableProperty0
 
 internal annotation class BasicComponentBuilder(val type: String)
 
-@BasicComponentBuilder("Int")
+@BasicComponentBuilder("kotlin.Int?")
 fun <T> buildIntBasicComponent(parentBuilder: Panel, prop: KMutableProperty0<T?>, enabled: Boolean = true, onChange: (value: T) -> Unit) : T? {
     return buildStandardControl<UbtIntConfigProp, T>(parentBuilder, prop, onChange) { annon, observableProp ->
         intTextField()
@@ -42,12 +42,12 @@ fun <T> buildIntBasicComponent(parentBuilder: Panel, prop: KMutableProperty0<T?>
     }
 }
 
-@BasicComponentBuilder("Double")
+@BasicComponentBuilder("kotlin.Double?")
 fun <T> buildDoubleBasicComponent(parentBuilder: Panel, prop: KMutableProperty0<T?>, enabled: Boolean = true, onChange: (value: T) -> Unit) : T? {
     return buildSpinnerPropUi(parentBuilder, prop as KMutableProperty0<Double?>, 0.0..100000000000.0, 0.1) as T
 }
 
-@BasicComponentBuilder("Boolean")
+@BasicComponentBuilder("kotlin.Boolean?")
 fun <T> buildBooleanBasicComponent(parentBuilder: Panel, prop: KMutableProperty0<T?>, enabled: Boolean = true, onChange: (value: T) -> Unit) : T? {
     return  buildStandardControl<UbtBooleanConfigProp, T>(parentBuilder, prop,onChange) { annon, observableProp ->
         checkBox(annon.prettyTitle)
@@ -56,7 +56,7 @@ fun <T> buildBooleanBasicComponent(parentBuilder: Panel, prop: KMutableProperty0
     }
 }
 
-@BasicComponentBuilder("String")
+@BasicComponentBuilder("kotlin.String?")
 fun <T> buildStingBasicComponent(parentBuilder: Panel, prop: KMutableProperty0<T?>, enabled: Boolean = true, onChange: (value: T) -> Unit) : T? {
     val fileAnnon = getAnnotation<UbtFileConfigProp>(prop, false)
 
@@ -74,9 +74,9 @@ fun <T> buildStingBasicComponent(parentBuilder: Panel, prop: KMutableProperty0<T
     return null
 }
 
-@BasicComponentBuilder("Array<String>")
+@BasicComponentBuilder("kotlin.Array<kotlin.String>?")
 fun <T> buildStingArrayBasicComponent(parentBuilder: Panel, prop: KMutableProperty0<T?>, enabled: Boolean = true, onChange: (value: T) -> Unit) : T? {
-    return buildStandardControl<UbtStringArrayConfigProp, T>(parentBuilder, prop, onChange) { annon, _ ->
+     return buildStandardControl<UbtStringArrayConfigProp, T>(parentBuilder, prop, onChange) { annon, _ ->
             val values = (prop.get() as Array<String>?) ?: arrayOf()
             val listModel = DefaultListModel<String>().apply { addAll( values.toList() ) }
 
