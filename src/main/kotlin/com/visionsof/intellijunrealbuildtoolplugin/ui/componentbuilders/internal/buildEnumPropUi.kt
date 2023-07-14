@@ -24,9 +24,8 @@ fun <T, U> buildEnumPropUi(parentBuilder: Panel, prop: KMutableProperty0<T?>, an
         lateinit var valueProp: KProperty1<T, U>
 
         if (enumConstructorParams.isEmpty()) {
-            TODO()
+            throw Exception("enum configs need a value constructor")
         } else {
-            // TODO: Is this safe?
             valueProp = propClass.members.firstOrNull { it.name == enumConstructorParams[0].name }
                 .castSafelyTo<KProperty1<T, U>>()!!
         }

@@ -7,74 +7,35 @@ import com.intellij.ui.dsl.builder.*
 import com.visionsof.intellijunrealbuildtoolplugin.model.BuildConfiguration
 import com.visionsof.intellijunrealbuildtoolplugin.model.ParallelExecutorConfiguration
 import com.visionsof.intellijunrealbuildtoolplugin.model.UbtConfiguration
+import com.visionsof.intellijunrealbuildtoolplugin.services.BasicPropUiFactoryService
 import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.buildProcessCountMultiplierSlider
+import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.buildSpinnerPropUi
 import com.visionsof.intellijunrealbuildtoolplugin.ui.tabbuilders.checkConfig
-import javax.swing.JLabel
 import kotlin.reflect.KMutableProperty1
 
-
-fun buildUbtQuickMenu(config: UbtConfiguration, onApply : () -> Unit, onCancel: () -> Unit): DialogPanel {
-
+fun buildUbtQuickMenu(masterConfig: UbtConfiguration, onApply : () -> Unit, onCancel: () -> Unit): DialogPanel {
     lateinit var panel : DialogPanel
 
+    var config = checkConfig(masterConfig, UbtConfiguration::buildConfiguration, ::BuildConfiguration)
+
+    val propService = BasicPropUiFactoryService.getInstance()
     val maxProcessors = Runtime.getRuntime().availableProcessors()
-
-    val buildConfigProp = UbtConfiguration::buildConfiguration
-
-    fun <T, U> configNullCheck (parentProp: KMutableProperty1<UbtConfiguration, T?>, prop: KMutableProperty1<T, U?>, defaultValue: U ) : U {
-        val parentVal = parentProp.get(config)
-        if(parentVal == null || prop.get(parentVal) == null) {
-            return defaultValue
-        }
-        return (prop.get(parentVal))!!
-    }
-
-    fun <T, U> configAssign (parentProp: KMutableProperty1<UbtConfiguration, T?>, factory: () -> T,  prop: KMutableProperty1<T, U?>, value: U? ) {
-        var parentVal = parentProp.get(config)
-        if(parentVal == null) {
-            parentVal = factory()
-            parentProp.set(config, parentVal)
-        }
-        prop.set(parentVal!!, value)
-    }
-
-    lateinit var priorityExecutorComment: JLabel
-
-    val priorityExecutorCommentBuilder = {
-        var priority = "Incredibuild"
-        if(config.buildConfiguration != null) {
-            if(config.buildConfiguration!!.allowHybrid != null && config.buildConfiguration!!.allowHybrid!!) {
-                priority = "Hybrid"
-            } else if(config.buildConfiguration!!.allowXge == null || config.buildConfiguration!!.allowXge!!) {
-              // no-op. We're already set
-            } else if(config.buildConfiguration!!.allowFastBuild == null || config.buildConfiguration!!.allowFastBuild!!) {
-                priority = "FASTBuild"
-            } else if(config.buildConfiguration!!.allowSNDBS == null || config.buildConfiguration!!.allowSNDBS!!) {
-                priority = "SNDBS"
-            } else if(config.buildConfiguration!!.allowHordeCompute == null || config.buildConfiguration!!.allowHordeCompute!!) {
-                priority = "Horde"
-            }
-        }
-
-        "Priority $priority"
-    }
 
     fun executorActionFactory(name: String, prop: KMutableProperty1<BuildConfiguration, Boolean?>, selectedDefault: Boolean) : DumbAwareToggleAction {
         return object : DumbAwareToggleAction(name){
             override fun isSelected(e: AnActionEvent): Boolean {
-                if(config.buildConfiguration == null || prop.get(config.buildConfiguration!!) == null) {
+                if(masterConfig.buildConfiguration == null || prop.get(masterConfig.buildConfiguration!!) == null) {
                     return selectedDefault
                 }
-                return prop.get(config.buildConfiguration!!)!!
+                return prop.get(masterConfig.buildConfiguration!!)!!
             }
 
             override fun setSelected(e: AnActionEvent, state: Boolean) {
-                if(config.buildConfiguration == null) {
-                    config.buildConfiguration = BuildConfiguration()
+                if(masterConfig.buildConfiguration == null) {
+                    masterConfig.buildConfiguration = BuildConfiguration()
                 }
 
-                prop.set(config.buildConfiguration!!, state)
-                priorityExecutorComment.text = priorityExecutorCommentBuilder()
+                prop.set(masterConfig.buildConfiguration!!, state)
             }
         }
     }
@@ -82,48 +43,18 @@ fun buildUbtQuickMenu(config: UbtConfiguration, onApply : () -> Unit, onCancel: 
     panel = panel() {
         group ("Build Configuration") {
             row() {
-                label("Executors:")
-            }
-            row() {
+                label("Enabled Executors:")
                 actionsButton(
                     executorActionFactory("1. Hybrid", BuildConfiguration::allowHybrid, false),
                     executorActionFactory("2. Incredibuild", BuildConfiguration::allowXge, true),
                     executorActionFactory("3. FASTBuild", BuildConfiguration::allowFastBuild, true),
                 )
-                priorityExecutorComment = label(priorityExecutorCommentBuilder()).component
-            }
-            row() {
-                checkBox("Unity Build")
-                    .bindSelected(
-                        { configNullCheck(buildConfigProp, BuildConfiguration::useUnityBuild, true)},
-                        { configAssign(UbtConfiguration::buildConfiguration, ::BuildConfiguration, BuildConfiguration::useUnityBuild, it) }
-                    )
             }
 
-            row() {
-                checkBox("Adaptive Unity Build")
-                    .bindSelected(
-                        { configNullCheck(buildConfigProp, BuildConfiguration::useAdaptiveUnityBuild, true)},
-                        { configAssign(UbtConfiguration::buildConfiguration, ::BuildConfiguration, BuildConfiguration::useAdaptiveUnityBuild, it) }
-                    )
-            }
-
-            row() {
-                checkBox("Warnings As Errors")
-                    .bindSelected(
-                        { configNullCheck(buildConfigProp, BuildConfiguration::warningsAsErrors, false)},
-                        { configAssign(UbtConfiguration::buildConfiguration, ::BuildConfiguration, BuildConfiguration::warningsAsErrors, it) }
-                    )
-            }
-
-            row() {
-                spinner(IntRange(0, maxProcessors))
-                    .label("Max Parallel Actions")
-                    .bindIntValue(
-                        { configNullCheck(buildConfigProp, BuildConfiguration::maxParallelActions, 0)},
-                        { configAssign(UbtConfiguration::buildConfiguration, ::BuildConfiguration, BuildConfiguration::maxParallelActions, it) }
-                    )
-            }
+            propService.build(this, config!!::useUnityBuild, false)
+            propService.build(this, config::useAdaptiveUnityBuild, false)
+            propService.build(this, config::warningsAsErrors, false)
+            buildSpinnerPropUi(this, config::maxParallelActions, 0..(maxProcessors * 2), 1, false)
         }
 
         group ("Parallel Executor") {
@@ -131,13 +62,14 @@ fun buildUbtQuickMenu(config: UbtConfiguration, onApply : () -> Unit, onCancel: 
                 label("Process Count Multiplier")
             }
             row() {
-                buildProcessCountMultiplierSlider(this, checkConfig(config, UbtConfiguration::parallelExecutor, ::ParallelExecutorConfiguration)!!)
+                buildProcessCountMultiplierSlider(this, checkConfig(masterConfig, UbtConfiguration::parallelExecutor, ::ParallelExecutorConfiguration)!!)
             }
         }
+
         row() {
             link("Edit Configuration") {
                 onCancel()
-                UbtGlobalConfigurationWindow(config, onApply).show()
+                UbtGlobalConfigurationWindow(masterConfig, onApply).show()
             }
         }
 

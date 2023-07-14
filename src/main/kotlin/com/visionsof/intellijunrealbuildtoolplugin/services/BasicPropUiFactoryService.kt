@@ -33,14 +33,14 @@ internal class BasicPropUiFactoryService() {
         }
     }
 
-    fun <T> build(parentBuilder: Panel, prop: KMutableProperty0<T?>, enabled: Boolean = true, onChange: (value: T) -> Unit = {}) : T? {
+    fun <T> build(parentBuilder: Panel, prop: KMutableProperty0<T?>, withDescription: Boolean = true, enabled: Boolean = true, onChange: (value: T) -> Unit = {}) : T? {
         var returnDefault: T? = null
 
         if((prop.returnType.classifier as KClass<*>).java.isEnum) {
             val enumAnnon = getAnnotation<UbtStringEnumConfigProp>(prop, true)!!
             buildEnumPropUi<T, String>(parentBuilder, prop, enumAnnon)
         } else {
-            returnDefault = builderMap[prop.returnType.toString()]?.call(parentBuilder, prop, enabled, onChange) as T?
+            returnDefault = builderMap[prop.returnType.toString()]?.call(parentBuilder, prop, withDescription, enabled, onChange) as T?
         }
 
         return returnDefault

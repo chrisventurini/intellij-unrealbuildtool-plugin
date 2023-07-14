@@ -14,13 +14,13 @@ import javax.swing.text.DefaultFormatterFactory
 import kotlin.reflect.KClass
 
 
-fun <T : Comparable<T>> buildSpinnerPropUi(parentBuilder: Panel, prop: KMutableProperty0<T?>, closedRange: ClosedRange<T>, step: T, enabled: Boolean = true, onChange: (value: T) -> Unit = {}) : T {
+fun <T : Comparable<T>> buildSpinnerPropUi(parentBuilder: Panel, prop: KMutableProperty0<T?>, closedRange: ClosedRange<T>, step: T, withDescription: Boolean = true, enabled: Boolean = true, onChange: (value: T) -> Unit = {}) : T {
 
     var returnDefault : T? = null
 
     fun completeSpinner(prettyTitle:String, description: String, classType: KClass<*>, spinnerFactory: (Row) -> Cell<JSpinner>) {
 
-        buildDefaultLayout(parentBuilder, description) {
+        buildDefaultLayout(parentBuilder, if(withDescription) description else "") {
             spinnerFactory(this)
                 .label(prettyTitle)
                 .enabled(enabled)

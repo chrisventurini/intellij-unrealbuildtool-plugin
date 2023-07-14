@@ -9,7 +9,7 @@ import com.visionsof.intellijunrealbuildtoolplugin.ui.componentbuilders.buildDef
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.full.memberProperties
 
-internal inline fun <reified T: Annotation, U> buildStandardControl(parentBuilder: Panel, prop: KMutableProperty0<U?>, noinline onChange: (value: U) -> Unit, crossinline controlBuilder: Row.(T, ObservableMutableProperty<U?>) -> Unit) : U? {
+internal inline fun <reified T: Annotation, U> buildStandardWrapper(parentBuilder: Panel, prop: KMutableProperty0<U?>, withDescription: Boolean = true, noinline onChange: (value: U) -> Unit, crossinline controlBuilder: Row.(T, ObservableMutableProperty<U?>) -> Unit) : U? {
     var returnDefault: U? = null
 
     var annon = getAnnotation<T>(prop, true)!!
@@ -17,7 +17,11 @@ internal inline fun <reified T: Annotation, U> buildStandardControl(parentBuilde
     val descriptionMember = (annon::class.memberProperties.firstOrNull { it.name == "description" } ) ?:
     throw Exception("Annotation ${T::class.simpleName} missing description member")
 
-    val description = descriptionMember.getter.call(annon) as String
+    var description = ""
+    if(withDescription)
+    {
+        description = descriptionMember.getter.call(annon) as String
+    }
 
     buildDefaultLayout(parentBuilder, description) {
         val defaultMember = (annon::class.memberProperties.firstOrNull { it.name == "default" } ) ?:
