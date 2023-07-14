@@ -49,7 +49,7 @@ data class ParallelExecutorConfiguration(
     var processorCountMultiplier : Double? = null,
 
     @field:XmlElement(name="MemoryPerActionBytes", namespace = NAMESPACE)
-    @property:UbtLongConfigProp("Memory Per-Action ", "Free memory per action in bytes, used to limit the number of parallel actions if the machine is memory starved. Set to 0 to disable free memory checking.", 16106127361)
+    @property:UbtLongConfigProp("Memory Per-Action ", "Free memory per action in bytes, used to limit the number of parallel actions if the machine is memory starved. Set to 0 to disable free memory checking.", 1610612736)
     var memoryPerActionBytes : Long? = null,
 
     @field:XmlElement(name = "ProcessPriority", namespace = NAMESPACE)
